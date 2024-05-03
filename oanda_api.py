@@ -3,17 +3,31 @@ import pandas as pd
 import defs
 import utils
 
+
 class OandaAPI():
     
     def __init__(self):
         self.session = requests.Session()
 
     def fetch_instruments(self):
-        pass
-    def get_instruments(self):
-        pass
+        url = f"{defs.OANDA_URL}/accounts/{defs.ACCOUNT_ID}/instruments"
+        response = self.session.get(url, params=None, headers=defs.SECURE_HEADER)
+        return response.status_code, response.json()
+    
+    def get_instruments_df(self):
+        code, data = self.fetch_instruments()
+        if code == 200:
+            df = pd.DataFrame.from_dict(data['instruments'])
+            return df[['name', 'type', 'displayName', 'pipLocation', 'marginRate']]
+        else:
+            return None
+
     def save_instruments(self):
-        pass
+        df = self.get_instruments()
+        if df is not None:
+            df.to_pickle(utils.get_instruments_data_filename())
+
+
     def fetch_candles(self, pair_name, count, granularity):
         url = f"{defs.OANDA_URL}/instruments/{pair_name}/candles"
 
@@ -28,4 +42,4 @@ class OandaAPI():
 
 if __name__ == "__main__":
     api = OandaAPI()
-    print(api.fetch_candles("EUR_NOK", 50, "H4"))
+    api.save_instruments()
