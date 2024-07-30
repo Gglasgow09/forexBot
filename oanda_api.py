@@ -23,7 +23,7 @@ class OandaAPI():
             return None
 
     def save_instruments(self):
-        df = self.get_instruments()
+        df = self.get_instruments_df()
         if df is not None:
             df.to_pickle(utils.get_instruments_data_filename())
 
@@ -43,3 +43,4 @@ class OandaAPI():
 if __name__ == "__main__":
     api = OandaAPI()
     api.save_instruments()
+ 
