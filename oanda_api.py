@@ -3,7 +3,6 @@ import pandas as pd
 import defs
 import utils
 
-
 class OandaAPI():
     
     def __init__(self):
