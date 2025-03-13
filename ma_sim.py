@@ -27,14 +27,21 @@ def evaluate_pair(i_pair, mashort, malong, price_data):
     df_trades["DELTA"] = (df_trades.mid_c.diff() / i_pair.pipLocation).shift(-1)
     df_trades["GAIN"] = df_trades["DELTA"] * df_trades["IS_TRADE"]
 
-    #print(f"{i_pair.name} {mashort} {malong} trades:{df_trades.shape[0]} gain:{df_trades['GAIN'].sum():.0f}")
+    df_trades['PAIR'] = i_pair.name
+    df_trades['MASHORT'] = mashort
+    df_trades['MALONG'] = malong
+    
+    del df_trades[get_ma_col(mashort)]
+    del df_trades[get_ma_col(malong)]
+
+    df_trades["time"] = [parse(x) for x in df_trades.time]
+
 
     return ma_result.MAResults(
         df_trades=df_trades,
         pairname=i_pair.name,
         params={'mashort' : mashort, 'malong' : malong}
     )
-
 
 def get_price_data(pairname, granularity):
     df = pd.read_pickle(utils.get_his_data_filename(pairname, granularity))
