@@ -35,7 +35,9 @@ def evaluate_pair(i_pair, mashort, malong, price_data):
     del df_trades[get_ma_col(malong)]
 
     df_trades["time"] = [parse(x) for x in df_trades.time]
-
+    df_trades["DURATION"] = df_trades.time.diff().shift(-1)
+    df_trades["DURATION"] = [x.total_seconds() / 3600 for x in df_trades.DURATION]
+    df_trades.drop_na(inplace=True)
 
     return ma_result.MAResults(
         df_trades=df_trades,
